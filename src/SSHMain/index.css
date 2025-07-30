@@ -1,0 +1,428 @@
+.ssh-main {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+}
+
+.ssh-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ssh-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.connection-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.connection-details {
+  font-size: 14px;
+  color: #666;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #6c757d;
+}
+
+.empty-state h3 {
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  margin-bottom: 20px;
+}
+
+.config-selection {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.config-selection h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.config-item {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.config-item:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.config-info h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.config-info p {
+  margin: 0 0 8px 0;
+  color: #666;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+}
+
+.auth-type {
+  font-size: 12px;
+  color: #28a745;
+  background: #e8f5e8;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.public-key-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6c757d;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.connect-btn {
+  text-align: right;
+  color: #007bff;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.connecting {
+  text-align: right;
+  color: #ffc107;
+  margin-top: 10px;
+}
+
+.ssh-workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-nav {
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  border-bottom-color: #007bff;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.tab-btn:hover:not(.active) {
+  background: #f8f9fa;
+}
+
+.terminal-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.terminal-output {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background: #2d3748;
+  color: #e2e8f0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.output-line {
+  display: flex;
+  margin-bottom: 5px;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.timestamp {
+  color: #718096;
+  font-size: 11px;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.output-line pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  flex: 1;
+}
+
+.output-line.command {
+  color: #4fd1c7;
+}
+
+.output-line.success {
+  color: #68d391;
+}
+
+.output-line.error {
+  color: #fc8181;
+}
+
+.output-line.stderr {
+  color: #feb2b2;
+}
+
+.output-line.executing {
+  color: #fbb6ce;
+}
+
+.loading {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.command-input-form {
+  padding: 15px;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.prompt {
+  color: #007bff;
+  font-weight: bold;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.commands-section {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.commands-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.commands-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.empty-commands {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.command-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.command-category h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.command-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.quick-command {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-command:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+}
+
+.command-name {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.command-text {
+  display: block;
+  background: #343a40;
+  color: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  margin-bottom: 5px;
+  word-break: break-all;
+}
+
+.command-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.3;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ssh-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .command-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

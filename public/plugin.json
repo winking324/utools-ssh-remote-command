@@ -1,0 +1,37 @@
+{
+  "name": "ssh-remote-command",
+  "pluginName": "SSH 远程命令执行",
+  "description": "通过 SSH 连接远程服务器并执行命令的 uTools 插件",
+  "author": "winking324",
+  "homepage": "https://github.com/winking324/utools-ssh-remote-command",
+  "version": "1.0.0",
+  "main": "index.html",
+  "preload": "preload/services.js",
+  "logo": "logo.png",
+  "development": {
+    "main": "http://localhost:5173"
+  },
+  "features": [
+    {
+      "code": "ssh-main",
+      "explain": "SSH 远程连接主界面",
+      "cmds": [
+        "SSH Remote Command"
+      ]
+    },
+    {
+      "code": "ssh-config",
+      "explain": "SSH 服务器配置管理",
+      "cmds": [
+        "SSH Remote 配置"
+      ]
+    },
+    {
+      "code": "ssh-command",
+      "explain": "SSH 命令配置管理", 
+      "cmds": [
+        "SSH Remote Command 配置"
+      ]
+    }
+  ]
+}
