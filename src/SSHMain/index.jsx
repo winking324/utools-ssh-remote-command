@@ -56,19 +56,35 @@ export default function SSHMain() {
     setSelectedConfig(config)
     
     try {
-      if (window.services?.ssh?.connect) {
-        const result = await window.services.ssh.connect(config)
-        if (result.success) {
-          setCurrentConnection(result.connectionId)
-          setShowConfigs(false)
-          addOutput(`✓ 已连接到 ${config.name} (${config.host}:${config.port})`, 'success')
-          window.utools?.showNotification?.('SSH连接成功')
-        } else {
-          addOutput(`✗ 连接失败: ${result.error}`, 'error')
-          window.utools?.showNotification?.(`连接失败: ${result.error}`)
-        }
-      } else {
+      // 检查是否在uTools环境中
+      if (!window.utools) {
         addOutput(`请在uTools中使用此插件进行SSH连接`, 'error')
+        return
+      }
+
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries && !window.services?.ssh?.connect) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (!window.services?.ssh?.connect) {
+        addOutput(`插件服务未就绪，请稍后重试`, 'error')
+        return
+      }
+
+      const result = await window.services.ssh.connect(config)
+      if (result.success) {
+        setCurrentConnection(result.connectionId)
+        setShowConfigs(false)
+        addOutput(`✓ 已连接到 ${config.name} (${config.host}:${config.port})`, 'success')
+        window.utools?.showNotification?.('SSH连接成功')
+      } else {
+        addOutput(`✗ 连接失败: ${result.error}`, 'error')
+        window.utools?.showNotification?.(`连接失败: ${result.error}`)
       }
     } catch (error) {
       console.error('Connection failed:', error)
@@ -119,23 +135,39 @@ export default function SSHMain() {
     addOutput(`$ ${cmd}`, 'command')
 
     try {
-      if (window.services?.ssh?.execute) {
-        const result = await window.services.ssh.execute(currentConnection, cmd)
-        if (result.success) {
-          if (result.stdout) {
-            addOutput(result.stdout, 'stdout')
-          }
-          if (result.stderr) {
-            addOutput(result.stderr, 'stderr')
-          }
-          if (result.exitCode !== 0) {
-            addOutput(`Exit code: ${result.exitCode}`, 'error')
-          }
-        } else {
-          addOutput(`执行失败: ${result.error}`, 'error')
+      // 检查是否在uTools环境中
+      if (!window.utools) {
+        addOutput(`请在uTools中使用此插件执行SSH命令`, 'error')
+        return
+      }
+
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries && !window.services?.ssh?.execute) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (!window.services?.ssh?.execute) {
+        addOutput(`插件服务未就绪，请稍后重试`, 'error')
+        return
+      }
+
+      const result = await window.services.ssh.execute(currentConnection, cmd)
+      if (result.success) {
+        if (result.stdout) {
+          addOutput(result.stdout, 'stdout')
+        }
+        if (result.stderr) {
+          addOutput(result.stderr, 'stderr')
+        }
+        if (result.exitCode !== 0) {
+          addOutput(`Exit code: ${result.exitCode}`, 'error')
         }
       } else {
-        addOutput(`请在uTools中使用此插件执行SSH命令`, 'error')
+        addOutput(`执行失败: ${result.error}`, 'error')
       }
     } catch (error) {
       console.error('Command execution failed:', error)
@@ -171,6 +203,22 @@ export default function SSHMain() {
 
   const handleQuickCommand = (command) => {
     setCommandInput(command.command)
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }
+
+  const handleQuickCommandExecute = async (command) => {
+    // 自动切换到终端标签页
+    setActiveTab('terminal')
+    
+    // 等待一小段时间确保标签页切换完成
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
+    // 直接执行命令
+    executeCommand(command.command)
+    
+    // 聚焦到输入框
     if (inputRef.current) {
       inputRef.current.focus()
     }
@@ -376,6 +424,8 @@ export default function SSHMain() {
                             key={command.id} 
                             className="quick-command"
                             onClick={() => handleQuickCommand(command)}
+                            onDoubleClick={() => handleQuickCommandExecute(command)}
+                            title="单击填入命令，双击直接执行"
                           >
                             <div className="command-name">{command.name}</div>
                             <code className="command-text">{command.command}</code>

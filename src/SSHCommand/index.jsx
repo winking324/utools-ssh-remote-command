@@ -34,15 +34,32 @@ export default function SSHCommand() {
         createdAt: editingCommand?.createdAt || new Date().toISOString()
       }
       
-      if (window.services?.sshCommand?.save) {
-        const savedCommand = window.services.sshCommand.save(command)
-        loadCommands()
-        resetForm()
-        window.utools?.showNotification?.(`命令 "${savedCommand.name}" 已保存`)
-      } else {
+      // 检查是否在uTools环境中
+      if (!window.utools) {
         console.log('请在uTools中使用此功能')
         resetForm()
+        return
       }
+
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries && !window.services?.sshCommand?.save) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (!window.services?.sshCommand?.save) {
+        console.log('插件服务未就绪，请稍后重试')
+        resetForm()
+        return
+      }
+
+      const savedCommand = window.services.sshCommand.save(command)
+      loadCommands()
+      resetForm()
+      window.utools?.showNotification?.(`命令 "${savedCommand.name}" 已保存`)
     } catch (error) {
       console.error('Failed to save SSH command:', error)
       window.utools?.showNotification?.('保存命令失败')
@@ -60,15 +77,31 @@ export default function SSHCommand() {
     setShowForm(true)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
-      if (window.services?.sshCommand?.delete) {
-        window.services.sshCommand.delete(id)
-        loadCommands()
-        window.utools?.showNotification?.('命令已删除')
-      } else {
+      // 检查是否在uTools环境中
+      if (!window.utools) {
         console.log('请在uTools中使用此功能')
+        return
       }
+
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries && !window.services?.sshCommand?.delete) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (!window.services?.sshCommand?.delete) {
+        console.log('插件服务未就绪，请稍后重试')
+        return
+      }
+
+      window.services.sshCommand.delete(id)
+      loadCommands()
+      window.utools?.showNotification?.('命令已删除')
     } catch (error) {
       console.error('Failed to delete SSH command:', error)
       window.utools?.showNotification?.('删除命令失败')

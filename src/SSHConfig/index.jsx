@@ -25,12 +25,29 @@ export default function SSHConfig() {
     loadConfigs()
   }, [])
 
-  const loadConfigs = () => {
+  const loadConfigs = async () => {
     try {
-      const savedConfigs = window.services?.sshConfig?.getAll?.() || []
-      setConfigs(savedConfigs)
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 5 // 增加重试次数
+      
+      while (retryCount < maxRetries && !window.services?.sshConfig?.getAll) {
+        console.log(`等待services加载... (${retryCount + 1}/${maxRetries})`)
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (window.services?.sshConfig?.getAll) {
+        const savedConfigs = window.services.sshConfig.getAll()
+        console.log('加载的配置数量:', savedConfigs.length)
+        setConfigs(savedConfigs)
+      } else {
+        console.error('services.sshConfig.getAll 方法不可用')
+        setConfigs([])
+      }
     } catch (error) {
       console.error('Failed to load SSH configs:', error)
+      setConfigs([])
     }
   }
 
@@ -42,15 +59,32 @@ export default function SSHConfig() {
         id: editingConfig?.id || Date.now().toString()
       }
       
-      if (window.services?.sshConfig?.save) {
-        const savedConfig = window.services.sshConfig.save(config)
-        loadConfigs()
-        resetForm()
-        window.utools?.showNotification?.(`SSH配置 "${savedConfig.name}" 已保存`)
-      } else {
+      // 检查是否在uTools环境中
+      if (!window.utools) {
         console.log('请在uTools中使用此功能')
         resetForm()
+        return
       }
+
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries && !window.services?.sshConfig?.save) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (!window.services?.sshConfig?.save) {
+        console.log('插件服务未就绪，请稍后重试')
+        resetForm()
+        return
+      }
+
+      const savedConfig = window.services.sshConfig.save(config)
+      loadConfigs()
+      resetForm()
+      window.utools?.showNotification?.(`SSH配置 "${savedConfig.name}" 已保存`)
     } catch (error) {
       console.error('Failed to save SSH config:', error)
       window.utools?.showNotification?.('保存SSH配置失败')
@@ -75,15 +109,31 @@ export default function SSHConfig() {
     setShowForm(true)
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     try {
-      if (window.services?.sshConfig?.delete) {
-        window.services.sshConfig.delete(id)
-        loadConfigs()
-        window.utools?.showNotification?.('SSH配置已删除')
-      } else {
+      // 检查是否在uTools环境中
+      if (!window.utools) {
         console.log('请在uTools中使用此功能')
+        return
       }
+
+      // 等待services加载完成
+      let retryCount = 0
+      const maxRetries = 3
+      
+      while (retryCount < maxRetries && !window.services?.sshConfig?.delete) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+        retryCount++
+      }
+
+      if (!window.services?.sshConfig?.delete) {
+        console.log('插件服务未就绪，请稍后重试')
+        return
+      }
+
+      window.services.sshConfig.delete(id)
+      loadConfigs()
+      window.utools?.showNotification?.('SSH配置已删除')
     } catch (error) {
       console.error('Failed to delete SSH config:', error)
       window.utools?.showNotification?.('删除SSH配置失败')
@@ -100,9 +150,24 @@ export default function SSHConfig() {
       return
     }
 
-    // 检查是否在uTools环境中
-    if (!window.services?.sshConfig?.test) {
+    // 检查是否在uTools环境中 - 使用更可靠的检测方式
+    if (!window.utools) {
       const message = '请在uTools中使用此插件进行SSH连接测试'
+      setTestMessage(`⚠️ ${message}`)
+      return
+    }
+
+    // 等待services加载完成，最多重试3次
+    let retryCount = 0
+    const maxRetries = 3
+    
+    while (retryCount < maxRetries && !window.services?.sshConfig?.test) {
+      await new Promise(resolve => setTimeout(resolve, 500)) // 等待500ms
+      retryCount++
+    }
+
+    if (!window.services?.sshConfig?.test) {
+      const message = '插件服务未就绪，请稍后重试'
       setTestMessage(`⚠️ ${message}`)
       return
     }
